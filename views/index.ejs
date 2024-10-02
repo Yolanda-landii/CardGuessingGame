@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Guessing Game</title>
+    <link rel="stylesheet" href="/styles.css"> 
+</head>
+<body>
+    <h1>Card Guessing Game</h1>
+    <div id="timer">Time: 00:00:00</div>
+    
+    <div class="container">
+        <div class="gameboard">
+            <div class="tiles"></div>
+        </div>
+
+        <div class="sidebar">
+            <div class="controls">
+                <button id="startButton">Start Game</button>
+                <button id="resetButton">Reset Game</button>
+            </div>
+
+            <h2>Leaderboard</h2>
+            <ul id="leaderboard">
+                <% scores.forEach((score) => { %>
+                    <li><%= score.name %>: <%= score.points %></li>
+                <% }); %>
+            </ul>
+        </div>
+    </div>
+
+    <script defer src="/game.js"></script> 
+</body>
+</html>
