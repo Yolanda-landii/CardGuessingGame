@@ -1,8 +1,8 @@
 const tilesContainer = document.querySelector(".tiles");
 const startButton = document.getElementById("startButton");
-const resetButton = document.getElementById("resetButton");
+const exitButton = document.getElementById("resetButton");
 
-const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R"];
+const letters = ["A", "B", "C", "D", "E", "F", "G", "H"];
 let lettersPicklist;
 let tileCount;
 let revealedCount;
@@ -12,32 +12,23 @@ let timer;
 let seconds = 0, minutes = 0, hours = 0;
 const timerElement = document.getElementById('timer');
 
-
-let highScore = { username: "", time: Infinity };
-
 function initGame() {
-    console.log("Initializing Game...");
     tilesContainer.innerHTML = '';
-    lettersPicklist = [...letters, ...letters]; 
-    tileCount = lettersPicklist.length; 
+    lettersPicklist = [...letters, ...letters];
+    tileCount = lettersPicklist.length;
     revealedCount = 0;
     activeTile = null;
     awaitingEndOfMove = false;
-    seconds = 0;
-    minutes = 0;
-    hours = 0;
-    timerElement.textContent = 'Time: 00:00:00'; 
     startTimer();
 
     for (let i = 0; i < tileCount; i++) {
         const randomIndex = Math.floor(Math.random() * lettersPicklist.length);
         const letter = lettersPicklist[randomIndex];
         const tile = buildTile(letter);
-        lettersPicklist.splice(randomIndex, 1); 
+        lettersPicklist.splice(randomIndex, 1);
         tilesContainer.appendChild(tile);
     }
 }
-
 
 function buildTile(letter) {
     const element = document.createElement("div");
@@ -76,22 +67,12 @@ function buildTile(letter) {
             element.setAttribute("data-revealed", "true");
             activeTile.setAttribute("data-revealed", "true");
             activeTile = null;
+            awaitingEndOfMove = false;
             revealedCount += 2;
 
             if (revealedCount === tileCount) {
                 stopTimer();
-                const totalTime = seconds + minutes * 60 + hours * 3600;
-                alert("Congratulations! You win!");
-
-                // Check for high score
-                if (totalTime < highScore.time) {
-                    const username = prompt("You beat the high score! Please enter your username:");
-                    if (username) {
-                        saveHighScore(username, totalTime);
-                    }
-                }
-
-                alert(`Your time: ${hours}:${minutes}:${seconds}`);
+                alert("You win! Refresh to start again.");
             }
 
             return;
@@ -128,31 +109,9 @@ function stopTimer() {
     clearInterval(timer);
 }
 
-function saveHighScore(username, totalTime) {
-    fetch('/save-high-score', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, time: totalTime }),
-    })
-    .then(response => {
-        if (response.ok) {
-            alert("High score saved!");
-            highScore = { username, time: totalTime };
-        } else {
-            alert("Error saving high score.");
-        }
-    })
-    .catch(err => console.error(err));
-}
-
-startButton.addEventListener("click", () => {
-    console.log("Start Button Clicked");
-    initGame();
-});
-resetButton.addEventListener("click", () => {
+// Event listeners
+startButton.addEventListener("click", initGame);
+exitButton.addEventListener("click", () => {
     tilesContainer.innerHTML = '';
     stopTimer();
-    timerElement.textContent = 'Time: 00:00:00'; 
 });
